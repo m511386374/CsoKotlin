@@ -1,0 +1,140 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'com.didi.virtualapk.plugin'
+
+android {
+    signingConfigs {
+        config {
+            keyAlias KEY_ALIAS
+            keyPassword kEYPASS_WORD
+            storeFile file(STORE_FILE)
+            storePassword STORE_PASSWORD
+        }
+    }
+    compileSdkVersion rootProject.ext.android["compileSdkVersion"]
+    buildToolsVersion rootProject.ext.android["buildToolsVersion"]
+    useLibrary 'org.apache.http.legacy'
+
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId "com.glgs.cso"
+        minSdkVersion rootProject.ext.android["minSdkVersion"]
+        targetSdkVersion rootProject.ext.android["targetSdkVersion"]
+        versionCode rootProject.ext.android["versionCode"]
+        versionName rootProject.ext.android["versionName"]
+        testInstrumentationRunner rootProject.ext.dependencies["androidJUnitRunner"]
+        multiDexEnabled true
+    }
+
+
+    buildTypes {
+        debug {
+            resValue "string", "app_name", APP_NAME
+            buildConfigField "String", "PLAT_FORM_CODE", PLAT_FORM_CODE
+            buildConfigField "String", "app_name", APP_NAME
+
+            manifestPlaceholders = [
+                    JPUSH_PKGNAME: APPLICATION_ID,
+                    JPUSH_APPKEY : JPUSH_APPKEY, //JPush 上注册的包名对应的 Appkey.
+                    JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
+                    BAIDU_APPKEY : BAIDU_APPKEY
+            ]
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            buildConfigField "boolean", "USE_CANARY", "true"
+            buildConfigField "String", "VERSRIONSTATUS", VERSRIONSTATUS
+            buildConfigField "int", "MANAGE_ID", MANAGE_ID
+
+//            signingConfig signingConfigs.config
+//            minifyEnabled true
+//            shrinkResources true
+//            zipAlignEnabled true
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+//
+        release {
+            resValue "string", "app_name", APP_NAME
+            buildConfigField "String", "app_name", APP_NAME
+            buildConfigField "String", "PLAT_FORM_CODE", PLAT_FORM_CODE
+            manifestPlaceholders = [
+                    JPUSH_PKGNAME: APPLICATION_ID,
+                    JPUSH_APPKEY : JPUSH_APPKEY, //JPush 上注册的包名对应的 Appkey.
+                    JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
+                    BAIDU_APPKEY : BAIDU_APPKEY
+            ]
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            buildConfigField "boolean", "USE_CANARY", "false"
+            buildConfigField "String", "VERSRIONSTATUS", VERSRIONSTATUS
+            buildConfigField "int", "MANAGE_ID", MANAGE_ID
+            signingConfig signingConfigs.config
+            shrinkResources true
+            minifyEnabled true
+            shrinkResources true
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        disable 'InvalidPackage'
+        disable "ResourceType"
+        abortOnError false
+    }
+}
+virtualApk{
+    packageId = 0x6f
+    targetHost = 'D:/Download/VirtualAPKHost/app'//宿主应用的app模块路径
+    applyHostMapping = true
+}
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    //support
+    implementation rootProject.ext.dependencies["cardview-v7"]
+    implementation rootProject.ext.dependencies["androideventbus"]
+    api rootProject.ext.dependencies["dagger2"]
+    kapt rootProject.ext.dependencies["dagger2-compiler"]
+    implementation rootProject.ext.dependencies["progressmanager"]
+    implementation rootProject.ext.dependencies["retrofit-url-manager"]
+    implementation rootProject.ext.dependencies["lifecyclemodel"]
+    kapt(rootProject.ext.dependencies["butterknife-compiler"]) {
+        exclude module: 'support-annotations'
+    }
+    implementation rootProject.ext.dependencies["design"]
+    implementation rootProject.ext.dependencies["paginate"]
+    implementation 'me.jessyan:arms:2.5.2'
+    implementation rootProject.ext.dependencies["autosize"]
+    implementation 'me.jessyan:arms-imageloader-glide:2.5.2'
+    implementation 'com.blankj:utilcode:1.25.9' //工具类
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-20'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'
+    implementation 'com.qianwen:update-app:3.5.2' //版本更新
+    implementation 'me.yokeyword:fragmentation-core:1.3.5'
+    implementation 'me.yokeyword:fragmentation:1.3.5'
+    implementation 'com.wuhenzhizao:titlebar:1.1.4'//标题栏
+    implementation 'com.kongzue.dialog_v3:dialog:3.1.3'
+    implementation 'com.youth.banner:banner:1.4.10'//banner
+    implementation 'com.hjq:toast:5.6'
+    implementation 'com.gyf.immersionbar:immersionbar:2.3.3-beta15'//沉浸式状态栏
+
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation 'cn.carbs.android:AvatarImageView:1.0.4'
+    implementation 'com.github.iielse:ImageWatcher:1.1.5'
+    implementation 'com.github.razerdp:BasePopup:2.2.1'
+    implementation 'com.github.razerdp:BasePopup-compat-lifecycle:2.2.1'
+    implementation 'com.contrarywind:Android-PickerView:4.1.8'
+    implementation 'com.github.yaozs:ImageShowPicker:1.0.1'
+    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
+    implementation 'com.zxy.android:recovery:1.0.0'
+    implementation 'com.alibaba:fastjson:1.1.71.android'
+    testImplementation rootProject.ext.dependencies["junit"]
+    debugImplementation rootProject.ext.dependencies["canary-debug"]
+    releaseImplementation rootProject.ext.dependencies["canary-release"]
+    testImplementation rootProject.ext.dependencies["canary-release"]
+    implementation 'cn.jiguang.sdk:jpush:3.1.6'
+    implementation 'cn.jiguang.sdk:jcore:1.2.6'
+}
